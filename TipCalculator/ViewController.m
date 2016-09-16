@@ -10,9 +10,13 @@
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *billAmountTextField;
-@property (weak, nonatomic) IBOutlet UITextField *tipPercentageTextField;
 @property (weak, nonatomic) IBOutlet UILabel *tipDisplayLabel;
 
+@property (weak, nonatomic) IBOutlet UISlider *tipSlider;
+@property (weak, nonatomic) IBOutlet UILabel *tipAmountDisplayLabel;
+
+
+- (void)calculateTip;
 @end
 
 @implementation ViewController
@@ -29,33 +33,31 @@
 }
 - (IBAction)tapRecieved:(UITapGestureRecognizer *)sender {
     [self.billAmountTextField resignFirstResponder];
-    [self.tipPercentageTextField resignFirstResponder];
-    
+        
 }
 
-- (IBAction)calculateTip:(UIButton *)sender {
+- (IBAction)calculateTip{
     
-    
-    NSNumber *tipPercent;
     NSNumber *billAmount;
     NSNumber *tipResult;
     
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
-    numberFormatter.alwaysShowsDecimalSeparator = NO;
-    numberFormatter.usesSignificantDigits = YES;
-    numberFormatter.maximumSignificantDigits = 3;
-    numberFormatter.minimumSignificantDigits = 1;
+    NSNumberFormatter *totalFormatter = [[NSNumberFormatter alloc] init];
+    totalFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    totalFormatter.alwaysShowsDecimalSeparator = NO;
+    totalFormatter.usesSignificantDigits = YES;
+    totalFormatter.maximumSignificantDigits = 3;
+    totalFormatter.minimumSignificantDigits = 1;
     
+    billAmount = [totalFormatter numberFromString:self.billAmountTextField.text];
     
+    tipResult = @([billAmount integerValue] * self.tipSlider.value);
     
-    tipPercent = [numberFormatter numberFromString:self.tipPercentageTextField.text];
-    billAmount = [numberFormatter numberFromString:self.billAmountTextField.text];
+    self.tipDisplayLabel.text = [@"$" stringByAppendingString:[totalFormatter stringFromNumber:tipResult]];
     
-    tipResult = @([billAmount integerValue] * ([tipPercent integerValue]*0.01));
+    NSNumberFormatter *tipFormatter = [[NSNumberFormatter alloc] init];
+    tipFormatter.numberStyle = NSNumberFormatterPercentStyle;
     
-    self.tipDisplayLabel.text = [@"$" stringByAppendingString:[numberFormatter stringFromNumber:tipResult]];
-    
+    self.tipAmountDisplayLabel.text = [tipFormatter stringFromNumber: [NSNumber numberWithFloat:self.tipSlider.value]];
     
 }
 
